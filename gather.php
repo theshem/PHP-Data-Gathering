@@ -96,6 +96,9 @@ curl_setopt($ch, CURLOPT_COOKIEJAR, $ckfile);
 $data = curl_exec($ch);
 #=========================== - GET FORM VALUES =========================#
 
+// no time limit, RUN forever BABY :D
+set_time_limit(0);
+
 $limit = (isset($_GET['limit']) and is_numeric($_GET['limit'])) ? $_GET['limit'] : 1;
 
 for($i=1; $i<=$limit; $i++){

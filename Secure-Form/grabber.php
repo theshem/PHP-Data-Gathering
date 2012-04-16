@@ -1,7 +1,7 @@
 <?php
 // set url address and temporary cookie file
-$ckfile = tempnam ("./tmp", "HASH");
-$url = "http://localhost/grabber/secure-form.php";
+$ckfile = tempnam("../tmp", "HASH");
+$url = "http://localhost/grabber/Secure-Form/secure-form.php";	// TODO: fix the address
 
 #=========================== + GET SEARCH FORM ========================
 $ch = curl_init();
