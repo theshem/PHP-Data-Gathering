@@ -1,54 +1,65 @@
 <?php
+// set url address and temporary cookie file
+$ckfile = tempnam ("./tmp", "HASH");
+$url = "http://localhost/grabber/secure-form.php";
 
-/* STEP 1. let’s create a cookie file */
-$ckfile = tempnam ("./tmp", "CURLCOOKIE");
-$url = "http://localhost/Secure-Form/secure-form.php";
+#=========================== + GET SEARCH FORM ========================
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+curl_setopt($ch, CURLOPT_COOKIEJAR, $ckfile);
+$data = curl_exec($ch);
+#=========================== - GET SEARCH FORM ========================
 
-/* STEP 2. visit the homepage to set the cookie properly */
-$ch = curl_init($url);
-curl_setopt ($ch, CURLOPT_COOKIEJAR, $ckfile); 
-curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-
-$myhtml = curl_exec ($ch);
-
+#========================= + GET DOCUMENT OBJECTS =====================
 // create DOM object
 $doc = new DOMDocument();
 
 // load HTML from string
-@$doc->loadHTML($myhtml);
+@$doc->loadHTML($data);
+#========================= - GET DOCUMENT OBJECTS =====================
 
+#=========================== + SET POST PARAMS ========================
 // list input tags
-$input_arr = $doc->getElementsByTagName('input');
+$inputs = $doc->getElementsByTagName('input');
 
-foreach ($input_arr as $input) {
-       $post_data[$input->getAttribute('name')] = $input->getAttribute('value');
+// make an array of the existing input tags
+foreach ($inputs as $input) {
+	$input_arr[$input->getAttribute('name')] = $input->getAttribute('value');
 }
 
+// assign post params array
+$post_arr = array(
+	'fname'		=>	'Hashem',
+	'lname'		=>	'Qolami',
+	'TOKEN'		=>	rawurlencode($input_arr['TOKEN']),
+	'submit'	=>	'Submit',
+);
+
+
+
+// convert array to string
+$post_str = '';
+foreach ($post_arr as $key=>$val) {
+	if(strlen($post_str)>0) $post_str .='&';
+	$post_str .= "$key=$val";
+}
+#=========================== - SET POST PARAMS ========================
+
+// show post array and string type for checking
 echo '<pre>';
-print_r($post_data);
+print_r($post_arr);
+echo $post_str;
 echo '</pre>';
 
-echo $myhtml;
 
-$post_data['fname']='Hashem';
-$post_data['lname']='Qolami';
+#========================== + GET THE RESULT ===========================
+curl_setopt($ch, CURLOPT_POST, TRUE);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $post_str);
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_COOKIEFILE, $ckfile);
+$data = curl_exec($ch);
 
-$ch = curl_init($url);
-curl_setopt ($ch, CURLOPT_COOKIEFILE, $ckfile); 
-curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-
-// doing a POST request
-curl_setopt($ch, CURLOPT_POST, 1);
-
-// adding the post variables to the request
-curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-
-$output = curl_exec($ch);
-
-curl_close($ch);
-
-echo '<pre>';
-print_r($post_data);
-echo '</pre>';
-
-echo $output;
+echo $data;
