@@ -7,8 +7,6 @@ $url = "http://localhost/grabber/secure-form.php";
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_COOKIEJAR, $ckfile);
 $data = curl_exec($ch);
 #=========================== - GET SEARCH FORM ========================
@@ -38,8 +36,6 @@ $post_arr = array(
 	'submit'	=>	'Submit',
 );
 
-
-
 // convert array to string
 $post_str = '';
 foreach ($post_arr as $key=>$val) {
@@ -54,7 +50,6 @@ print_r($post_arr);
 echo $post_str;
 echo '</pre>';
 
-
 #========================== + GET THE RESULT ===========================
 curl_setopt($ch, CURLOPT_POST, TRUE);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $post_str);
@@ -63,3 +58,4 @@ curl_setopt($ch, CURLOPT_COOKIEFILE, $ckfile);
 $data = curl_exec($ch);
 
 echo $data;
+#========================== - GET THE RESULT ===========================

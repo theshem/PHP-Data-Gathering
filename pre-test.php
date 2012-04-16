@@ -1,27 +1,31 @@
 <?php
+header('Content-type: text/html; charset=utf-8', true);
+
 // set url address and temporary cookie file
 $ckfile = tempnam("./tmp", "CURLCOOKIE");
 $url = "http://tibf.ir/Book/Search/Farsi/Default.aspx";
 
-#=========================== + GET SEARCH FORM ========================
+#=========================== + GET SEARCH FORM =========================#
+#================================ FOR ONCE =============================#
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_COOKIEJAR, $ckfile);
 $data = curl_exec($ch);
-#=========================== - GET SEARCH FORM ========================
+#=========================== - GET SEARCH FORM =========================#
 
-#========================= + GET DOCUMENT OBJECTS =====================
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////----------------------------			PAGE #1			----------------------------///////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 // create DOM object
 $doc = new DOMDocument();
 
 // load HTML from string
 @$doc->loadHTML($data);
-#========================= - GET DOCUMENT OBJECTS =====================
 
-#=========================== + SET POST PARAMS ========================
+#=========================== + SET POST PARAMS =========================#
 // list input tags
 $inputs = $doc->getElementsByTagName('input');
 
@@ -58,26 +62,47 @@ foreach ($post_arr as $key=>$val) {
 	if(strlen($post_str)>0) $post_str .='&';
 	$post_str .= "$key=$val";
 }
-#=========================== - SET POST PARAMS ========================
+#=========================== - SET POST PARAMS =========================#
 
-// show post array and string type for checking
-echo '<pre>';
-print_r($post_arr);
-echo $post_str;
-echo '</pre>';
 
-#========================== + GET THE RESULT ===========================
+#========================== + GET THE RESULT ===========================#
 curl_setopt($ch, CURLOPT_POST, TRUE);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $post_str);
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_COOKIEFILE, $ckfile);
 $data = curl_exec($ch);
 
-echo $data;
+
+// create DOM object
+$doc = new DOMDocument();
+
+// load HTML from string
+@$doc->loadHTML(@mb_convert_encoding($data, 'HTML-ENTITIES', 'utf-8'));
+
+$table = $doc->getElementById('ctl00_ContentPlaceHolder1_BookGridView');
+
+$tr_arr = $table->getElementsByTagName('tr');
+
+foreach($tr_arr as $tr){
+	$td_arr = $tr->getElementsByTagName('td');
+	foreach($td_arr as $td){
+		$temp[] = trim($td->textContent);
+	}
+	//	$temp[0]: ID	$temp[1]: ISBN Code
+	if(is_array($temp) && is_numeric($temp[0]) && !is_numeric($temp[1])){
+		$out_arr[] = $temp;
+	}
+	unset($temp);
+}
+#========================== - GET THE RESULT ===========================
+
+//echo '<pre>';
+//print_r($out_arr);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////----------------------------			PAGE #2			----------------------------///////
 ///////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // create DOM object
 $doc = new DOMDocument();
@@ -85,6 +110,7 @@ $doc = new DOMDocument();
 // load HTML from string
 @$doc->loadHTML($data);
 
+#=========================== + SET POST PARAMS ========================#
 // list input tags
 $inputs = $doc->getElementsByTagName('input');
 
@@ -121,22 +147,42 @@ foreach ($post_arr as $key=>$val) {
 	if(strlen($post_str)>0) $post_str .='&';
 	$post_str .= "$key=$val";
 }
-#==========================- - SET POST PARAMS ========================
+#=========================== - SET POST PARAMS =========================#
 
-// show post array and string type for checking
-echo '<pre>';
-print_r($post_arr);
-echo $post_str;
-echo '</pre>';
 
-#========================-- + GET THE RESULT ===========================
+#========================== + GET THE RESULT ===========================#
 curl_setopt($ch, CURLOPT_POST, TRUE);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $post_str);
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_COOKIEFILE, $ckfile);
 $data = curl_exec($ch);
 
-echo $data;
+// create DOM object
+$doc = new DOMDocument();
+
+// load HTML from string
+@$doc->loadHTML(@mb_convert_encoding($data, 'HTML-ENTITIES', 'utf-8'));
+
+$table = $doc->getElementById('ctl00_ContentPlaceHolder1_BookGridView');
+
+$tr_arr = $table->getElementsByTagName('tr');
+
+foreach($tr_arr as $tr){
+	$td_arr = $tr->getElementsByTagName('td');
+	foreach($td_arr as $td){
+		$temp[] = trim($td->textContent);
+	}
+	//	$temp[0]: ID	$temp[1]: ISBN Code
+	if(is_array($temp) && is_numeric($temp[0]) && !is_numeric($temp[1])){
+		$out_arr[] = $temp;
+	}
+	unset($temp);
+}
+#========================== - GET THE RESULT ===========================#
+
+echo '<pre>';
+print_r($out_arr);
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////----------------------------			PAGE #3			----------------------------///////
@@ -148,6 +194,7 @@ $doc = new DOMDocument();
 // load HTML from string
 @$doc->loadHTML($data);
 
+#=========================== + SET POST PARAMS ========================#
 // list input tags
 $inputs = $doc->getElementsByTagName('input');
 
@@ -184,19 +231,38 @@ foreach ($post_arr as $key=>$val) {
 	if(strlen($post_str)>0) $post_str .='&';
 	$post_str .= "$key=$val";
 }
-#==========================- - SET POST PARAMS ========================
+#=========================== - SET POST PARAMS ========================#
 
-// show post array and string type for checking
-echo '<pre>';
-print_r($post_arr);
-echo $post_str;
-echo '</pre>';
 
-#========================-- + GET THE RESULT ===========================
+#========================== + GET THE RESULT ==========================#
 curl_setopt($ch, CURLOPT_POST, TRUE);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $post_str);
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_COOKIEFILE, $ckfile);
 $data = curl_exec($ch);
 
-echo $data;
+// create DOM object
+$doc = new DOMDocument();
+
+// load HTML from string
+@$doc->loadHTML(@mb_convert_encoding($data, 'HTML-ENTITIES', 'utf-8'));
+
+$table = $doc->getElementById('ctl00_ContentPlaceHolder1_BookGridView');
+
+$tr_arr = $table->getElementsByTagName('tr');
+
+foreach($tr_arr as $tr){
+	$td_arr = $tr->getElementsByTagName('td');
+	foreach($td_arr as $td){
+		$temp[] = trim($td->textContent);
+	}
+	//	$temp[0]: ID	$temp[1]: ISBN Code
+	if(is_array($temp) && is_numeric($temp[0]) && !is_numeric($temp[1])){
+		$out_arr[] = $temp;
+	}
+	unset($temp);
+}
+#========================== - GET THE RESULT ===========================#
+
+echo '<pre>';
+print_r($out_arr);
